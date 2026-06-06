@@ -15,13 +15,34 @@ const MENACE = [
   { top: '14%', left: '88%', count: 3, size: '1.6rem' },
   { top: '72%', left: '5%', count: 2, size: '1.3rem' },
   { top: '78%', left: '90%', count: 2, size: '1.3rem' },
+  { top: '40%', left: '3%', count: 4, size: '1.1rem' },
+  { top: '52%', left: '95%', count: 3, size: '1.2rem' },
+  { top: '24%', left: '48%', count: 2, size: '1rem' },
 ];
 
 const STARS = [
-  { top: '30%', left: '12%', size: 24, anim: 'animate-float-y' },
-  { top: '44%', left: '90%', size: 20, anim: 'animate-float-slowy' },
-  { top: '64%', left: '14%', size: 18, anim: 'animate-bob-rotate' },
-  { top: '86%', left: '52%', size: 16, anim: 'animate-sway' },
+  { top: '30%', left: '12%', size: 24, anim: 'animate-float-y', color: '#FFD700', opacity: 0.45 },
+  { top: '44%', left: '90%', size: 20, anim: 'animate-float-slowy', color: '#FF008C', opacity: 0.4 },
+  { top: '64%', left: '14%', size: 18, anim: 'animate-bob-rotate', color: '#00F5FF', opacity: 0.38 },
+  { top: '86%', left: '52%', size: 16, anim: 'animate-sway', color: '#FFD700', opacity: 0.4 },
+  { top: '12%', left: '34%', size: 14, anim: 'animate-float-slowy', color: '#FFD700', opacity: 0.32 },
+  { top: '20%', left: '70%', size: 22, anim: 'animate-bob-rotate', color: '#FFD700', opacity: 0.42 },
+  { top: '56%', left: '6%', size: 13, anim: 'animate-sway', color: '#00C897', opacity: 0.3 },
+  { top: '70%', left: '82%', size: 26, anim: 'animate-float-y', color: '#FF008C', opacity: 0.36 },
+  { top: '92%', left: '24%', size: 15, anim: 'animate-float-slowy', color: '#FFD700', opacity: 0.34 },
+  { top: '38%', left: '50%', size: 12, anim: 'animate-bob-rotate', color: '#00F5FF', opacity: 0.28 },
+];
+
+// Big, faint JoJo onomatopoeia / iconic phrases drifting in the deep background.
+const PHRASES = [
+  { text: 'ドドド', top: '18%', left: '8%', size: '4.2rem', rot: -10, opacity: 0.07, anim: 'animate-float-slowy' },
+  { text: 'オラオラ', top: '60%', left: '60%', size: '3.4rem', rot: 8, opacity: 0.06, anim: 'animate-sway' },
+  { text: '無駄無駄', top: '82%', left: '8%', size: '3.2rem', rot: -6, opacity: 0.06, anim: 'animate-float-y' },
+  { text: 'やれやれだぜ', top: '6%', left: '52%', size: '2.4rem', rot: 5, opacity: 0.06, anim: 'animate-bob-rotate' },
+  { text: 'WRYYY', top: '46%', left: '20%', size: '3rem', rot: -8, opacity: 0.055, anim: 'animate-float-slowy' },
+  { text: 'ジョジョ', top: '34%', left: '78%', size: '3.8rem', rot: 10, opacity: 0.07, anim: 'animate-sway' },
+  { text: '波紋', top: '70%', left: '38%', size: '4.6rem', rot: -4, opacity: 0.06, anim: 'animate-bob-rotate' },
+  { text: 'スタンド', top: '92%', left: '66%', size: '2.6rem', rot: 6, opacity: 0.055, anim: 'animate-float-y' },
 ];
 
 /**
@@ -59,6 +80,23 @@ export function MangaBackground({ color = '#FFD700', accent = '#FF008C', particl
       {/* Halftone comic texture */}
       <div className="absolute inset-0 jojo-halftone opacity-50" />
 
+      {/* Deep-background JoJo onomatopoeia / iconic phrases */}
+      {PHRASES.map((p, i) => (
+        <span
+          key={`p${i}`}
+          className={`absolute font-display jojo-menace select-none whitespace-nowrap ${reduce ? '' : p.anim}`}
+          style={{
+            top: p.top,
+            left: p.left,
+            fontSize: p.size,
+            opacity: p.opacity,
+            transform: `rotate(${p.rot}deg)`,
+          }}
+        >
+          {p.text}
+        </span>
+      ))}
+
       {/* Floating menacing symbols */}
       {MENACE.map((m, i) => (
         <div key={`m${i}`} className="absolute" style={{ top: m.top, left: m.left }}>
@@ -68,8 +106,8 @@ export function MangaBackground({ color = '#FFD700', accent = '#FF008C', particl
 
       {/* Drifting Joestar stars */}
       {STARS.map((s, i) => (
-        <span key={`s${i}`} className={`absolute ${s.anim}`} style={{ top: s.top, left: s.left, opacity: 0.45 }}>
-          <JoestarStar size={s.size} />
+        <span key={`s${i}`} className={`absolute ${reduce ? '' : s.anim}`} style={{ top: s.top, left: s.left, opacity: s.opacity }}>
+          <JoestarStar size={s.size} color={s.color} />
         </span>
       ))}
 

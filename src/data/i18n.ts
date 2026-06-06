@@ -57,6 +57,8 @@ export interface UIStrings {
   loading: string;
   shareCopied: string;
   shareTitle: string;
+  scanToDiscover: string;
+  cardCredit: string;
   statLabels: Record<StandStatKey, string>;
   statAbbrev: Record<StandStatKey, string>;
   metricLabels: Record<MetricKey, string>;
@@ -118,6 +120,8 @@ const en: UIStrings = {
   loading: 'Awakening…',
   shareCopied: 'Result copied to clipboard!',
   shareTitle: 'JoJo Personality Test Result',
+  scanToDiscover: 'Scan to discover your Stand',
+  cardCredit: '© 2026 mi2o · Discover your Stand',
   statLabels: { power: 'Power', speed: 'Speed', range: 'Range', durability: 'Durability', precision: 'Precision', potential: 'Potential' },
   statAbbrev: { power: 'PWR', speed: 'SPD', range: 'RNG', durability: 'DUR', precision: 'PRC', potential: 'DEV' },
   metricLabels: { determination: 'Determination', charisma: 'Charisma', intelligence: 'Intelligence', creativity: 'Creativity', confidence: 'Confidence', loyalty: 'Loyalty', strategy: 'Strategy', willpower: 'Willpower' },
@@ -179,6 +183,8 @@ const ar: UIStrings = {
   loading: '…استيقاظ',
   shareCopied: 'تم نسخ النتيجة إلى الحافظة!',
   shareTitle: 'نتيجة اختبار شخصية جوجو',
+  scanToDiscover: 'امسح لاكتشاف ستاندك',
+  cardCredit: '© 2026 mi2o · اكتشف ستاندك',
   statLabels: { power: 'القوة', speed: 'السرعة', range: 'المدى', durability: 'المتانة', precision: 'الدقة', potential: 'الإمكانات' },
   statAbbrev: { power: 'قوة', speed: 'سرعة', range: 'مدى', durability: 'متانة', precision: 'دقة', potential: 'تطور' },
   metricLabels: { determination: 'العزيمة', charisma: 'الكاريزما', intelligence: 'الذكاء', creativity: 'الإبداع', confidence: 'الثقة', loyalty: 'الولاء', strategy: 'التخطيط', willpower: 'قوة الإرادة' },

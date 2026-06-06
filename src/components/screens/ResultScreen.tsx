@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { Lang, RankedCharacter } from '@/types';
 import { getUI } from '@/data/i18n';
@@ -7,7 +7,6 @@ import {
   MetricRadar,
   StandStatBlock,
   ToBeContinued,
-  MenacingText,
 } from '@/components/fx';
 import { cx, hexA } from '@/lib/utils';
 import { ResultReveal } from './ResultReveal';
@@ -36,14 +35,30 @@ function Panel({
   return (
     <motion.div
       variants={staggerItem}
-      className={cx('jojo-panel relative overflow-hidden rounded-xl bg-jojo-ink/70 p-4', className)}
-      style={{ borderColor: hexA(color, 0.75) }}
+      whileHover={{ y: -4 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+      className={cx(
+        'group relative overflow-hidden rounded-2xl border border-jojo-cream/15 bg-jojo-ink/60 p-5',
+        'shadow-[0_10px_30px_rgba(0,0,0,0.45)] backdrop-blur-sm',
+        'transition-colors duration-300 hover:border-jojo-gold/60',
+        className,
+      )}
     >
-      <div className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(90deg, ${color}, transparent)` }} />
-      <h3 className="mb-2 font-display uppercase text-lg tracking-wide text-jojo-cream">
+      {/* Soft corner glow on hover (uniform frame, accent only here) */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -right-12 -top-12 h-28 w-28 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-60"
+        style={{ background: hexA(color, 0.5) }}
+      />
+      <h3 className="mb-3 flex items-center gap-2.5 font-display uppercase text-lg tracking-wide text-jojo-cream">
+        <span
+          aria-hidden
+          className="inline-block h-5 w-1.5 shrink-0 rounded-full rtl:order-last"
+          style={{ background: color, boxShadow: `0 0 10px ${hexA(color, 0.7)}` }}
+        />
         {title}
       </h3>
-      <div className="text-start text-sm leading-relaxed text-jojo-cream/90">{children}</div>
+      <div className="relative text-start text-sm leading-relaxed text-jojo-cream/90">{children}</div>
     </motion.div>
   );
 }
@@ -56,36 +71,6 @@ export default function ResultScreen({ lang, ranking, onRestart }: Props): React
   const accent = top.accent;
 
   const [revealed, setRevealed] = useState(false);
-
-  const shareText = useMemo(
-    () => `${ui.shareTitle}: ${top.name} — ${matchPct}% ${ui.match}!`,
-    [ui.shareTitle, ui.match, top.name, matchPct],
-  );
-
-  const handleShare = useCallback(async () => {
-    const data = { title: ui.shareTitle, text: shareText, url: typeof window !== 'undefined' ? window.location.href : '' };
-    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
-      try {
-        await navigator.share(data);
-        return;
-      } catch {
-        /* user cancelled or failed — fall through to copy */
-      }
-    }
-    const payload = `${shareText} ${data.url}`.trim();
-    try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-        await navigator.clipboard.writeText(payload);
-        // eslint-disable-next-line no-alert
-        alert(ui.shareCopied);
-        return;
-      }
-    } catch {
-      /* clipboard blocked — fall through to prompt */
-    }
-    // eslint-disable-next-line no-alert
-    window.prompt(ui.shareTitle, payload);
-  }, [shareText, ui.shareTitle, ui.shareCopied]);
 
   return (
     <div dir={ui.dir} className="relative z-10 min-h-[100dvh] w-full overflow-x-hidden">
@@ -179,19 +164,15 @@ export default function ResultScreen({ lang, ranking, onRestart }: Props): React
             viewport={{ once: true, amount: 0.1 }}
             className="relative z-10 grid grid-cols-1 gap-6 lg:grid-cols-2"
           >
-            <motion.div variants={staggerItem} className="jojo-panel-gold rounded-xl bg-jojo-ink/70 p-5">
-              <div className="mb-3 flex items-center justify-center gap-2">
-                <MenacingText count={2} size="0.85rem" />
-                <h3 className="font-display uppercase text-2xl tracking-wide jojo-gold-text">{ui.standStats}</h3>
-              </div>
+            <motion.div variants={staggerItem} className="jojo-panel-gold rounded-xl bg-jojo-ink/70 p-6">
+              <h3 className="mb-1 text-center font-display uppercase text-xl tracking-[0.15em] jojo-gold-text">{ui.standStats}</h3>
+              <div aria-hidden className="mx-auto mb-5 h-px w-16 bg-jojo-gold/40" />
               <StandStatBlock stats={top.stats} labels={ui.statLabels} abbrev={ui.statAbbrev} color={color} lang={lang} />
             </motion.div>
 
-            <motion.div variants={staggerItem} className="jojo-panel-gold rounded-xl bg-jojo-ink/70 p-5">
-              <div className="mb-3 flex items-center justify-center gap-2">
-                <MenacingText count={2} size="0.85rem" />
-                <h3 className="font-display uppercase text-2xl tracking-wide jojo-gold-text">{ui.personalityRadar}</h3>
-              </div>
+            <motion.div variants={staggerItem} className="jojo-panel-gold rounded-xl bg-jojo-ink/70 p-6">
+              <h3 className="mb-1 text-center font-display uppercase text-xl tracking-[0.15em] jojo-gold-text">{ui.personalityRadar}</h3>
+              <div aria-hidden className="mx-auto mb-3 h-px w-16 bg-jojo-gold/40" />
               <div className="mx-auto w-full max-w-sm">
                 <MetricRadar metrics={top.metrics} abbrev={ui.metricAbbrev} labels={ui.metricLabels} color={color} accent={accent} lang={lang} />
               </div>
@@ -216,33 +197,17 @@ export default function ResultScreen({ lang, ranking, onRestart }: Props): React
               onClick={onRestart}
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-display uppercase tracking-wider text-base jojo-stroke text-jojo-black"
-              style={{ background: color, boxShadow: `0 0 24px ${hexA(color, 0.55)}` }}
+              className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-jojo-black px-6 py-3 font-display uppercase tracking-wider text-base font-bold text-jojo-black"
+              style={{
+                background: color,
+                boxShadow: `0 3px 0 0 rgba(5,5,5,0.9), 0 0 24px ${hexA(color, 0.55)}`,
+                textShadow: '0 1px 0 rgba(255,255,255,0.35)',
+              }}
             >
               <svg viewBox="0 0 24 24" width={18} height={18} fill="none" aria-hidden>
                 <path d="M4 12a8 8 0 108-8M4 12V6m0 6h6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               {ui.takeAgain}
-            </motion.button>
-
-            <motion.button
-              type="button"
-              onClick={handleShare}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-stat uppercase tracking-[0.18em] text-sm jojo-glass text-jojo-cream"
-              style={{ borderColor: hexA(accent, 0.6), boxShadow: `0 0 20px ${hexA(accent, 0.35)}` }}
-            >
-              <svg viewBox="0 0 24 24" width={18} height={18} fill="none" aria-hidden>
-                <path
-                  d="M18 8a3 3 0 10-2.83-4M6 12a3 3 0 100 0m12 4a3 3 0 10-2.83 4M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              {ui.shareResult}
             </motion.button>
 
             <ShareCard lang={lang} character={top} matchPct={matchPct} />

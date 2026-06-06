@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import type { CharacterKey, Lang, Question } from '@/types';
 import { getUI } from '@/data/i18n';
@@ -44,6 +45,27 @@ export function QuizScreen({
 }: Props) {
   const ui = getUI(lang);
   const reduce = useReducedMotion();
+
+  // Selection is owned here so only one answer can ever fire per question and
+  // siblings can react (dim/lock) cleanly. Reset whenever the question changes.
+  const [selected, setSelected] = useState<number | null>(null);
+  const timer = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    setSelected(null);
+    return () => window.clearTimeout(timer.current);
+  }, [questionNumber]);
+
+  const handleSelect = (i: number, scores: Partial<Record<CharacterKey, number>>) => {
+    if (selected !== null) return; // already locked in for this question
+    setSelected(i);
+    if (reduce) {
+      onAnswer(scores);
+      return;
+    }
+    // Let the confirm burst play, then commit and let the panel swap.
+    timer.current = window.setTimeout(() => onAnswer(scores), 430);
+  };
 
   const activeArcIndex = arcForQuestion(questionNumber, total);
   const activeArc = arcs[activeArcIndex];
@@ -128,7 +150,9 @@ export function QuizScreen({
                     lang={lang}
                     color={theme.color}
                     accent={theme.accent}
-                    onSelect={onAnswer}
+                    selected={selected === i}
+                    locked={selected !== null}
+                    onSelect={(scores) => handleSelect(i, scores)}
                   />
                 );
               })}
@@ -141,7 +165,7 @@ export function QuizScreen({
           <button
             type="button"
             onClick={onBack}
-            disabled={!canGoBack}
+            disabled={!canGoBack || selected !== null}
             aria-label={ui.back}
             className={cx(
               'group inline-flex items-center gap-2 rounded-full border-2 px-5 py-2.5',

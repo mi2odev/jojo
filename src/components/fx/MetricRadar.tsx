@@ -40,6 +40,12 @@ export function MetricRadar({ metrics, abbrev, labels, color = '#FFD700', accent
         ))}
       </ul>
     <svg viewBox={`${-pad} ${-pad} ${size + 2 * pad} ${size + 2 * pad}`} width="100%" height="100%" aria-hidden>
+      <defs>
+        <radialGradient id="radarFill" cx="50%" cy="50%" r="65%">
+          <stop offset="0%" stopColor={hexA(color, 0.4)} />
+          <stop offset="100%" stopColor={hexA(color, 0.1)} />
+        </radialGradient>
+      </defs>
       {/* grid rings */}
       {rings.map((lvl, ri) => (
         <polygon
@@ -58,14 +64,14 @@ export function MetricRadar({ metrics, abbrev, labels, color = '#FFD700', accent
       {/* data polygon (scales in) */}
       <motion.polygon
         points={dataStr}
-        fill={hexA(color, 0.34)}
+        fill="url(#radarFill)"
         stroke={color}
-        strokeWidth={2.5}
+        strokeWidth={2}
         strokeLinejoin="round"
         style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       />
       {/* vertices */}
       {dataPts.map((p, i) => (
@@ -73,10 +79,8 @@ export function MetricRadar({ metrics, abbrev, labels, color = '#FFD700', accent
           key={i}
           cx={p.x}
           cy={p.y}
-          r={3}
+          r={2.8}
           fill={accent}
-          stroke="#050505"
-          strokeWidth={1}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.5 + i * 0.05, duration: 0.3 }}
