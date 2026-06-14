@@ -10,6 +10,32 @@ export type CharacterKey =
 
 export type Grade = 'A' | 'B' | 'C' | 'D' | 'E' | 'INF';
 
+// ============================================================
+// Personality model (matching engine)
+// ============================================================
+/**
+ * The ten psychological dimensions the assessment measures. These were chosen
+ * because they show high variance across the eight protagonists (good
+ * discriminators); pan-protagonist traits like raw willpower/courage/loyalty
+ * are deliberately excluded from matching since every JoJo scores high on them.
+ */
+export type TraitKey =
+  | 'idealism'      // principle-driven moral conviction; doing right regardless of cost
+  | 'pragmatism'    // ends-justify-means; willingness to bend rules for results
+  | 'ambition'      // drive toward grand, self-defined goals / changing the world
+  | 'independence'  // self-reliance and forging one's own path over the group/tradition
+  | 'sociability'   // outward social energy, warmth, expressiveness
+  | 'stoicism'      // emotional control, composure, reserve
+  | 'adaptability'  // improvisation, flexibility, comfort with chaos
+  | 'strategy'      // planning, analysis, foresight
+  | 'empathy'       // compassion, protectiveness, attunement to others
+  | 'introspection';// self-reflection, curiosity, search for meaning/identity
+
+/** A full point in trait-space (0–100 per dimension for characters). */
+export type TraitVector = Record<TraitKey, number>;
+/** A single answer's contribution to the user's trait-space position. */
+export type AnswerDelta = Partial<TraitVector>;
+
 export type StandStatKey =
   | 'power' | 'speed' | 'range' | 'durability' | 'precision' | 'potential';
 
@@ -83,7 +109,8 @@ export interface LocalizedCharacter {
 
 export interface Answer {
   text: string;
-  scores: Partial<Record<CharacterKey, number>>;
+  /** Trait-space contribution of choosing this answer (shared across languages). */
+  scores: AnswerDelta;
 }
 
 export interface Question {

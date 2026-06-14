@@ -9,6 +9,7 @@ import {
   ToBeContinued,
 } from '@/components/fx';
 import { cx, hexA } from '@/lib/utils';
+import { LangToggle } from '@/components/LangToggle';
 import { ResultReveal } from './ResultReveal';
 import { StandProfile } from './StandProfile';
 import { CharacterGallery } from './CharacterGallery';
@@ -89,6 +90,11 @@ export default function ResultScreen({ lang, ranking, onRestart }: Props): React
           transition={{ duration: 0.6 }}
           className="relative mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-12 sm:px-6 sm:py-16"
         >
+          {/* Language switch (inline-end, RTL-aware) */}
+          <div className="absolute top-4 z-20 ltr:right-4 rtl:left-4">
+            <LangToggle />
+          </div>
+
           {/* HERO PROFILE */}
           <div className="relative z-10">
             <StandProfile lang={lang} character={top} matchPct={matchPct} />

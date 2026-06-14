@@ -1,39 +1,27 @@
-import type { CharacterKey, Lang, RankedCharacter, Scores } from '@/types';
-import { characterKeys, getCharacters } from '@/data/characters';
-import { MAX_SCORE } from '@/data/questions';
+import type { AnswerDelta, Lang, RankedCharacter, TraitVector } from '@/types';
+import { getCharacters } from '@/data/characters';
+import { addDelta, emptyVector, rankKeys, subtractDelta } from '@/data/personality';
 
-export function emptyScores(): Scores {
-  return characterKeys.reduce((acc, k) => { acc[k] = 0; return acc; }, {} as Scores);
+// The accumulator is a user trait-vector, not per-character points. These thin
+// wrappers keep the names the rest of the app already imports.
+export function emptyScores(): TraitVector {
+  return emptyVector();
 }
 
-export function addScores(base: Scores, delta: Partial<Record<CharacterKey, number>>): Scores {
-  const next = { ...base };
-  (Object.keys(delta) as CharacterKey[]).forEach((k) => {
-    next[k] = (next[k] ?? 0) + (delta[k] ?? 0);
-  });
-  return next;
+export function addScores(base: TraitVector, delta: AnswerDelta): TraitVector {
+  return addDelta(base, delta);
 }
 
-export function subtractScores(base: Scores, delta: Partial<Record<CharacterKey, number>>): Scores {
-  const next = { ...base };
-  (Object.keys(delta) as CharacterKey[]).forEach((k) => {
-    next[k] = Math.max(0, (next[k] ?? 0) - (delta[k] ?? 0));
-  });
-  return next;
+export function subtractScores(base: TraitVector, delta: AnswerDelta): TraitVector {
+  return subtractDelta(base, delta);
 }
 
-/** Full ranking (descending) with match percentages relative to the max score. */
-export function computeRanking(scores: Scores, lang: Lang): RankedCharacter[] {
+/** Full ranking (descending) by trait-vector similarity to each character. */
+export function computeRanking(user: TraitVector, lang: Lang): RankedCharacter[] {
   const chars = getCharacters(lang);
-  return characterKeys
-    .map((key) => ({
-      character: chars[key],
-      percentage: Math.round(((scores[key] ?? 0) / MAX_SCORE) * 100),
-    }))
-    .sort((a, b) => b.percentage - a.percentage)
-    .map((r, i) => ({ character: r.character, percentage: r.percentage, rank: i + 1 }));
-}
-
-export function topCharacterKey(scores: Scores): CharacterKey {
-  return characterKeys.reduce((a, b) => (scores[a] >= scores[b] ? a : b));
+  return rankKeys(user).map((r, i) => ({
+    character: chars[r.key],
+    percentage: r.pct,
+    rank: i + 1,
+  }));
 }

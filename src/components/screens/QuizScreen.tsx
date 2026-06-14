@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import type { CharacterKey, Lang, Question } from '@/types';
+import type { AnswerDelta, Lang, Question } from '@/types';
 import { getUI } from '@/data/i18n';
 import { arcForQuestion, arcs } from '@/data/arcs';
 import { cx, hexA } from '@/lib/utils';
 import { mangaPanel, staggerContainer } from '@/anim/variants';
 import { SpeedLines, MenacingText, JoestarStar } from '@/components/fx';
+import { LangToggle } from '@/components/LangToggle';
 import { DestinyPath } from './DestinyPath';
 import { AnswerCard } from './AnswerCard';
 
@@ -15,7 +16,7 @@ interface Props {
   questionNumber: number;
   total: number;
   canGoBack: boolean;
-  onAnswer: (scores: Partial<Record<CharacterKey, number>>) => void;
+  onAnswer: (scores: AnswerDelta) => void;
   onBack: () => void;
 }
 
@@ -56,7 +57,7 @@ export function QuizScreen({
     return () => window.clearTimeout(timer.current);
   }, [questionNumber]);
 
-  const handleSelect = (i: number, scores: Partial<Record<CharacterKey, number>>) => {
+  const handleSelect = (i: number, scores: AnswerDelta) => {
     if (selected !== null) return; // already locked in for this question
     setSelected(i);
     if (reduce) {
@@ -77,6 +78,11 @@ export function QuizScreen({
       dir={ui.dir}
       className="relative z-10 flex min-h-[100dvh] flex-col pb-24"
     >
+      {/* ===== Top bar: language switch ===== */}
+      <div className="mx-auto flex w-full max-w-3xl justify-end px-4 pt-4">
+        <LangToggle />
+      </div>
+
       {/* ===== Destiny Path progress (top) ===== */}
       <DestinyPath lang={lang} questionNumber={questionNumber} total={total} />
 

@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
-import type { CharacterKey, Lang } from '@/types';
+import type { AnswerDelta, Lang } from '@/types';
 import type { Answer } from '@/types';
 import { getUI } from '@/data/i18n';
 import { cx, hexA } from '@/lib/utils';
@@ -16,7 +16,7 @@ interface Props {
   selected?: boolean;
   /** A selection is in progress somewhere; ignore further input. */
   locked?: boolean;
-  onSelect: (scores: Partial<Record<CharacterKey, number>>) => void;
+  onSelect: (scores: AnswerDelta) => void;
 }
 
 /**

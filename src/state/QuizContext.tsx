@@ -2,18 +2,18 @@ import {
   createContext, useCallback, useContext, useEffect, useMemo, useRef, useState,
   type ReactNode,
 } from 'react';
-import type { CharacterKey, Lang, Question, RankedCharacter, Scores } from '@/types';
+import type { AnswerDelta, Lang, Question, RankedCharacter, TraitVector } from '@/types';
 import { getQuestions } from '@/data/questions';
 import { getUI, type UIStrings } from '@/data/i18n';
 import { addScores, computeRanking, emptyScores, subtractScores } from '@/lib/scoring';
 
-type AnswerDelta = Partial<Record<CharacterKey, number>>;
-
-const STORAGE_KEY = 'jojo-quiz-v1';
+// Bumped to v2: the persisted accumulator changed from per-character points to a
+// trait-vector, so any v1 payload must be ignored rather than mis-read.
+const STORAGE_KEY = 'jojo-quiz-v2';
 
 interface PersistedState {
   lang: Lang;
-  scores: Scores;
+  traits: TraitVector;
   qIndex: number;
   history: AnswerDelta[];
   completed: boolean;
@@ -22,7 +22,6 @@ interface PersistedState {
 interface QuizContextValue {
   lang: Lang;
   ui: UIStrings;
-  scores: Scores;
   qIndex: number;
   total: number;
   question: Question;
@@ -46,10 +45,10 @@ function loadState(): PersistedState | null {
     if (!raw) return null;
     const p = JSON.parse(raw) as Partial<PersistedState>;
     if (!p || (p.lang !== 'en' && p.lang !== 'ar')) return null;
-    if (typeof p.qIndex !== 'number' || !p.scores || !Array.isArray(p.history)) return null;
+    if (typeof p.qIndex !== 'number' || !p.traits || !Array.isArray(p.history)) return null;
     return {
       lang: p.lang,
-      scores: p.scores as Scores,
+      traits: p.traits as TraitVector,
       qIndex: p.qIndex,
       history: p.history as AnswerDelta[],
       completed: Boolean(p.completed),
@@ -62,7 +61,7 @@ function loadState(): PersistedState | null {
 export function QuizProvider({ children }: { children: ReactNode }) {
   const initial = loadState();
   const [lang, setLang] = useState<Lang>(initial?.lang ?? 'en');
-  const [scores, setScores] = useState<Scores>(initial?.scores ?? emptyScores());
+  const [traits, setTraits] = useState<TraitVector>(initial?.traits ?? emptyScores());
   const [qIndex, setQIndex] = useState<number>(initial?.qIndex ?? 0);
   const [history, setHistory] = useState<AnswerDelta[]>(initial?.history ?? []);
   const [completed, setCompleted] = useState<boolean>(initial?.completed ?? false);
@@ -77,11 +76,11 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   // Persist to localStorage on any change.
   useEffect(() => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ lang, scores, qIndex, history, completed }));
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ lang, traits, qIndex, history, completed }));
     } catch {
       /* storage unavailable (private mode / quota) — non-fatal */
     }
-  }, [lang, scores, qIndex, history, completed]);
+  }, [lang, traits, qIndex, history, completed]);
 
   // Keep <html> language/direction + title in sync.
   useEffect(() => {
@@ -91,7 +90,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   }, [lang, ui.dir]);
 
   const resetState = useCallback(() => {
-    setScores(emptyScores());
+    setTraits(emptyScores());
     setQIndex(0);
     setHistory([]);
     setCompleted(false);
@@ -102,16 +101,18 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   const restart = useCallback(() => { resetState(); }, [resetState]);
 
   const toggleLang = useCallback(() => {
-    // The two language banks differ, so switching resets the run.
     setLang((l) => (l === 'en' ? 'ar' : 'en'));
-    resetState();
-  }, [resetState]);
+    // An in-progress run is reset because the two question banks differ. A
+    // finished run is derived from a language-agnostic trait vector, so keep it
+    // and let the ranking simply re-translate (no bounce off the result page).
+    if (!completed) resetState();
+  }, [completed, resetState]);
 
   const answer = useCallback(
     (delta: AnswerDelta) => {
       if (committedRef.current === qIndex) return { done: false };
       committedRef.current = qIndex;
-      setScores((s) => addScores(s, delta));
+      setTraits((s) => addScores(s, delta));
       setHistory((h) => [...h, delta]);
       if (qIndex < total - 1) {
         setQIndex((i) => i + 1);
@@ -126,17 +127,17 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   const back = useCallback(() => {
     if (qIndex === 0 || history.length === 0) return;
     const last = history[history.length - 1];
-    setScores((s) => subtractScores(s, last));
+    setTraits((s) => subtractScores(s, last));
     setHistory((h) => h.slice(0, -1));
     setQIndex((i) => Math.max(0, i - 1));
     setCompleted(false);
     committedRef.current = -1;
   }, [qIndex, history]);
 
-  const ranking = useMemo(() => computeRanking(scores, lang), [scores, lang]);
+  const ranking = useMemo(() => computeRanking(traits, lang), [traits, lang]);
 
   const value: QuizContextValue = {
-    lang, ui, scores, qIndex: safeIndex, total,
+    lang, ui, qIndex: safeIndex, total,
     question: questions[safeIndex],
     questionNumber: safeIndex + 1,
     canGoBack: safeIndex > 0,

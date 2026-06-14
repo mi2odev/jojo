@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import type { Lang, LocalizedCharacter } from '@/types';
 import { getUI } from '@/data/i18n';
-import { EnergyCore, StandAura, SpeedLines, MenacingText, JoestarStar } from '@/components/fx';
+import { EnergyCore, StandAura, SpeedLines, MenacingText, JoestarStar, GlitchText } from '@/components/fx';
 import { slideUp, staggerContainer, staggerItem } from '@/anim/variants';
 import { cx, hexA } from '@/lib/utils';
 
@@ -126,7 +126,7 @@ export function StandProfile({ lang, character, matchPct }: Props) {
                 boxShadow: `inset 0 0 0 2px ${hexA(color, 0.6)}, 0 0 24px ${hexA(accent, 0.3)}`,
               }}
             >
-              {character.cry}
+              <GlitchText text={character.cry} className="w-full" />
             </div>
           </div>
         </div>
