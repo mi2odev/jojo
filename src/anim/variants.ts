@@ -28,8 +28,8 @@ export const scaleIn: Variants = {
 // Staggered groups
 export const staggerContainer: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
-  exit: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
+  show: { transition: { staggerChildren: 0.045, delayChildren: 0.04 } },
+  exit: { transition: { staggerChildren: 0.02, staggerDirection: -1 } },
 };
 
 export const staggerItem: Variants = {
@@ -43,11 +43,11 @@ export const mangaPanel: Variants = {
   hidden: { opacity: 0, scale: 0.92, rotateX: 12, filter: 'blur(8px)' },
   show: {
     opacity: 1, scale: 1, rotateX: 0, filter: 'blur(0px)',
-    transition: { duration: 0.7, ease: EASE_DRAMATIC },
+    transition: { duration: 0.42, ease: EASE_DRAMATIC },
   },
   exit: {
     opacity: 0, scale: 1.04, rotateX: -10, filter: 'blur(8px)',
-    transition: { duration: 0.45, ease: 'easeIn' },
+    transition: { duration: 0.22, ease: 'easeIn' },
   },
 };
 

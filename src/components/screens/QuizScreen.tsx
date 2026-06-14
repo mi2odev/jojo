@@ -65,7 +65,7 @@ export function QuizScreen({
       return;
     }
     // Let the confirm burst play, then commit and let the panel swap.
-    timer.current = window.setTimeout(() => onAnswer(scores), 430);
+    timer.current = window.setTimeout(() => onAnswer(scores), 170);
   };
 
   const activeArcIndex = arcForQuestion(questionNumber, total);

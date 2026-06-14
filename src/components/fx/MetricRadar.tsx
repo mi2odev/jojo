@@ -27,17 +27,10 @@ export function MetricRadar({ metrics, abbrev, labels, color = '#FFD700', accent
   const cy = size / 2;
   const R = size * 0.34;
   const pad = size * 0.18; // room for the axis-label ring (esp. longer Arabic words)
-  const depth = size * 0.06; // extrusion thickness
   const font = lang === 'ar' ? 'Tajawal, sans-serif' : 'Saira Condensed, sans-serif';
 
   const topPts = ORDER.map((k, i) => point(cx, cy, R, (metrics[k] ?? 0) / 100, i, n));
-  const botPts = topPts.map((p) => ({ x: p.x, y: p.y + depth }));
   const topStr = topPts.map((p) => `${p.x},${p.y}`).join(' ');
-  const botStr = botPts.map((p) => `${p.x},${p.y}`).join(' ');
-  const walls = topPts.map((p, i) => {
-    const j = (i + 1) % n;
-    return `${p.x},${p.y} ${topPts[j].x},${topPts[j].y} ${botPts[j].x},${botPts[j].y} ${botPts[i].x},${botPts[i].y}`;
-  });
   const rings = [0.25, 0.5, 0.75, 1];
 
   return (
@@ -58,10 +51,6 @@ export function MetricRadar({ metrics, abbrev, labels, color = '#FFD700', accent
                 <stop offset="32%" stopColor={hexA(color, 0.5)} />
                 <stop offset="100%" stopColor={hexA(color, 0.12)} />
               </radialGradient>
-              <linearGradient id="mr-wall" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={hexA(color, 0.6)} />
-                <stop offset="100%" stopColor="rgba(5,5,5,0.55)" />
-              </linearGradient>
               <radialGradient id="mr-grid" cx="50%" cy="50%" r="55%">
                 <stop offset="0%" stopColor="rgba(11,7,18,0.55)" />
                 <stop offset="100%" stopColor="rgba(11,7,18,0)" />
@@ -88,17 +77,13 @@ export function MetricRadar({ metrics, abbrev, labels, color = '#FFD700', accent
               return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke={hexA('#F4ECD6', 0.12)} strokeWidth={1} />;
             })}
 
-            {/* Extruded data volume (scales in) */}
+            {/* Flat data area (scales in) */}
             <motion.g
               style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={reduce ? { duration: 0 } : { duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
-              <polygon points={botStr} fill={hexA('#050505', 0.5)} stroke={hexA(color, 0.3)} strokeWidth={1} strokeLinejoin="round" />
-              {walls.map((w, i) => (
-                <polygon key={i} points={w} fill="url(#mr-wall)" stroke={hexA(color, 0.25)} strokeWidth={0.5} />
-              ))}
               <polygon points={topStr} fill="url(#mr-top)" stroke={color} strokeWidth={2.5} strokeLinejoin="round" filter="url(#mr-glow)" />
             </motion.g>
 
