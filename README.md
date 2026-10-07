@@ -1,12 +1,35 @@
-# React + Vite
+# JoJo Personality Quiz — Find your Stand
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An animated personality quiz inspired by *JoJo's Bizarre Adventure*. Answer the questions and get matched with a character, with a Stand stat block, a radar chart of your traits and a shareable result card.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Cinematic intro, manga backgrounds, speed lines, "menacing" text and glitch effects
+- Scored quiz with personality metrics and a radar chart of the result
+- Character gallery and Stand profile pages
+- Shareable result card with a QR code
+- Two languages with a language toggle (LTR / RTL)
 
-## Expanding the ESLint configuration
+## Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+React · TypeScript · Vite · Tailwind CSS · Framer Motion · Recharts · React Router · qrcode
+
+## Run it
+
+```bash
+npm install
+npm run dev      # start the dev server
+npm run build    # production build in dist/
+npm run preview  # preview the build
+```
+
+## Structure
+
+```
+src/
+  components/fx/       visual effects (aura, particles, speed lines, radar…)
+  components/screens/  hero, intro, quiz, result, share card, gallery
+  data/                questions, characters, personality metrics, i18n
+  lib/scoring.ts       quiz scoring
+  routes/              Home, Quiz, Result
+```
