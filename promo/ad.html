@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JoJo Quiz Ad</title>
+<link rel="stylesheet" href="fonts.css" />
+<style>
+  :root {
+    --gold: #FFD700; --goldlight: #FFEC8B; --purple: #4B0082; --violet: #6A0DAD;
+    --magenta: #FF008C; --cyan: #00F5FF; --cream: #F4ECD6; --black: #050505; --ink: #0B0712;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #050505; }
+  #stage {
+    position: relative; width: 1080px; height: 1920px; overflow: hidden;
+    background:
+      radial-gradient(ellipse 120% 80% at 50% -10%, rgba(75,0,130,0.65) 0%, rgba(5,5,5,0) 60%),
+      radial-gradient(ellipse 90% 70% at 88% 112%, rgba(255,0,140,0.32) 0%, rgba(5,5,5,0) 55%),
+      radial-gradient(ellipse 80% 60% at 4% 100%, rgba(0,245,255,0.18) 0%, rgba(5,5,5,0) 55%),
+      linear-gradient(165deg, #160E26 0%, #050505 55%, #0B0712 100%);
+    font-family: 'Poppins', sans-serif; color: var(--cream);
+  }
+  .abs { position: absolute; }
+  .fill { position: absolute; inset: 0; }
+  .scene { position: absolute; inset: 0; visibility: hidden; }
+  .halftone { background-image: radial-gradient(rgba(244,236,214,0.12) 2.2px, transparent 2.6px); background-size: 16px 16px; }
+  .halftone-dark { background-image: radial-gradient(rgba(5,5,5,0.28) 3px, transparent 3.4px); background-size: 18px 18px; }
+  .speed {
+    position: absolute; left: 50%; top: 50%; width: 3200px; height: 3200px; margin: -1600px 0 0 -1600px;
+    background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(244,236,214,0.20) 0deg 1.1deg, transparent 1.1deg 4.6deg);
+    -webkit-mask-image: radial-gradient(circle, transparent 12%, #000 34%, #000 60%, transparent 72%);
+  }
+  .speed.gold { background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,215,0,0.38) 0deg 1deg, transparent 1deg 5deg); }
+  .speed.ink { background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(5,5,5,0.35) 0deg 1.4deg, transparent 1.4deg 5.5deg); }
+  .display { font-family: 'Anton', Impact, sans-serif; text-transform: uppercase; line-height: 0.92; }
+  .editorial { font-family: 'Bodoni Moda', serif; font-style: italic; font-weight: 900; }
+  .stat { font-family: 'Saira Condensed', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.22em; }
+  .bungee { font-family: 'Bungee', cursive; }
+  .foil {
+    background: linear-gradient(100deg, #B8860B 0%, #FFD700 22%, #FFF6C8 38%, #FFD700 52%, #FF9F1C 72%, #FFEC8B 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .ink-stroke { -webkit-text-stroke: 6px #050505; paint-order: stroke fill; }
+  .menacing {
+    font-family: 'Noto Sans JP', sans-serif; font-weight: 900; color: #B44DFF;
+    -webkit-text-stroke: 8px #050505; paint-order: stroke fill;
+    text-shadow: 0 0 40px rgba(180,77,255,0.55);
+  }
+  .word { display: inline-block; will-change: transform, opacity; }
+  .panel-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .vignette { background: radial-gradient(ellipse 75% 60% at 50% 50%, transparent 40%, rgba(0,0,0,0.85) 100%); }
+  .flash { background: #fff; opacity: 0; }
+  .grain {
+    opacity: 0.07; mix-blend-mode: overlay;
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.6) 0 1px, transparent 1px 3px);
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="world" class="fill">
+    <!-- persistent background fx -->
+    <div id="bgSpeed" class="speed"></div>
+    <div class="fill halftone" style="opacity:.55"></div>
+    <div id="particles" class="fill"></div>
+
+    <!-- ===== S1: menacing intro ===== -->
+    <div id="s1" class="scene">
+      <div id="s1go" class="fill"></div>
+      <div id="s1a" class="abs display" style="left:0;right:0;top:620px;text-align:center;font-size:150px;"></div>
+      <div id="s1b" class="abs editorial" style="left:0;right:0;top:1130px;text-align:center;font-size:96px;line-height:1.05;"></div>
+    </div>
+
+    <!-- ===== S2: logo slam ===== -->
+    <div id="s2" class="scene">
+      <div id="s2speed" class="speed gold"></div>
+      <div id="s2rings" class="fill"></div>
+      <img id="s2logo" class="abs" src="../public/images/logo.png" style="left:140px;top:440px;width:800px;" />
+      <div id="s2q1" class="abs display" style="left:0;right:0;top:1080px;text-align:center;font-size:132px;color:var(--cream);"></div>
+      <div id="s2q2" class="abs display foil ink-stroke" style="left:0;right:0;top:1220px;text-align:center;font-size:250px;"></div>
+    </div>
+
+    <!-- ===== S3: character montage ===== -->
+    <div id="s3" class="scene"></div>
+
+    <!-- ===== S4: stats ===== -->
+    <div id="s4" class="scene">
+      <div id="s4speed" class="speed"></div>
+      <div id="s4star" class="abs" style="left:240px;top:260px;width:600px;height:600px;"></div>
+      <div id="s4rows" class="fill"></div>
+      <div id="s4strip" class="abs" style="left:0;top:1540px;height:330px;width:4000px;"></div>
+    </div>
+
+    <!-- ===== S5: CTA ===== -->
+    <div id="s5" class="scene">
+      <div id="s5grid" class="fill"></div>
+      <div class="fill" style="background:linear-gradient(180deg, rgba(5,5,5,0.25) 0%, rgba(11,7,18,0.92) 34%, rgba(11,7,18,0.92) 70%, rgba(5,5,5,0.3) 100%);"></div>
+      <div id="s5speed" class="speed gold"></div>
+      <img id="s5logo" class="abs" src="../public/images/logo.png" style="left:240px;top:560px;width:600px;" />
+      <div id="s5kick" class="abs stat" style="left:0;right:0;top:960px;text-align:center;font-size:34px;color:var(--cyan);">JoJo's Bizarre Adventure · Personality Test</div>
+      <div id="s5title" class="abs display" style="left:60px;right:60px;top:1020px;text-align:center;font-size:118px;"></div>
+      <div id="s5cta" class="abs" style="left:110px;width:860px;top:1310px;height:150px;"></div>
+      <div id="s5url" class="abs stat" style="left:0;right:0;top:1500px;text-align:center;font-size:50px;color:var(--cream);letter-spacing:0.08em;text-transform:none;">jojomi2o.netlify.app</div>
+      <div id="s5meta" class="abs stat" style="left:0;right:0;top:1570px;text-align:center;font-size:28px;color:rgba(244,236,214,0.7);">Free · 20 Questions · 8 Stands · EN / AR</div>
+    </div>
+
+    <div id="vig" class="fill vignette"></div>
+  </div>
+
+  <!-- ===== S6: To Be Continued (outside world so it isn't sepia'd) ===== -->
+  <div id="tbc" class="abs" style="left:60px;top:1640px;width:760px;height:150px;visibility:hidden;"></div>
+
+  <div class="fill grain"></div>
+  <div id="flash" class="fill flash"></div>
+</div>
+
+<script>
+// ---------------------------------------------------------------
+// Deterministic timeline: window.render(t) draws the frame at t (s).
+// ---------------------------------------------------------------
+const T = window.TIMELINE || {
+  s1: [0, 5.05], s2: [5.05, 7.99], s3: [7.99, 17.59], s4: [17.59, 23.59], s5: [23.59, 28.39], s6: [28.39, 30.5],
+  s1w1: 0.6, s1w2: 2.8, s2q1: 0.22, s2slam: 6.72, s4hits: [17.75, 19.53, 21.88], DUR: 30.5,
+};
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const p = (t, a, b) => cl((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const eb = x => { const c1 = 2.2, c3 = c1 + 1; return x <= 0 ? 0 : 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const shake = (t, amp, f = 1) => amp * Math.sin(t * 91.7 * f) * Math.cos(t * 53.3 * f);
+const $ = id => document.getElementById(id);
+const el = (tag, cls, style, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (style) e.style.cssText = style; if (html != null) e.innerHTML = html; return e; };
+const star = (fill, stroke = '#050505', sw = 6) =>
+  `<svg viewBox="-55 -55 110 110" width="100%" height="100%"><polygon points="${[...Array(10)].map((_, i) => { const r = i % 2 ? 21 : 50, a = -Math.PI / 2 + i * Math.PI / 5; return (r * Math.cos(a)).toFixed(2) + ',' + (r * Math.sin(a)).toFixed(2); }).join(' ')}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/></svg>`;
+
+const CHARS = [
+  { key: 'jonathan', first: 'Jonathan', last: 'Joestar', part: 1, partName: 'Phantom Blood', stand: 'Hamon Overdrive', cry: 'SUNLIGHT YELLOW OVERDRIVE!', color: '#2E7BE5', img: 'jonathanjoestar.png', pos: '50% 20%' },
+  { key: 'joseph', first: 'Joseph', last: 'Joestar', part: 2, partName: 'Battle Tendency', stand: 'Hermit Purple', cry: 'YOUR NEXT LINE IS...!', color: '#1FB85A', img: 'josephjoestar.png', pos: '40% 25%' },
+  { key: 'jotaro', first: 'Jotaro', last: 'Kujo', part: 3, partName: 'Stardust Crusaders', stand: 'Star Platinum', cry: 'ORA ORA ORA ORA!', color: '#7C4DFF', img: 'jotarokujo.png', pos: '50% 30%' },
+  { key: 'josuke4', first: 'Josuke', last: 'Higashikata', part: 4, partName: 'Diamond is Unbreakable', stand: 'Crazy Diamond', cry: 'DORA DORA DORA!', color: '#FF3D7F', img: 'josukehigashikata4.png', pos: '50% 18%' },
+  { key: 'giorno', first: 'Giorno', last: 'Giovanna', part: 5, partName: 'Golden Wind', stand: 'Gold Experience', cry: 'MUDA MUDA MUDA!', color: '#FFC91C', img: 'giornogiovanna.png', pos: '50% 12%' },
+  { key: 'jolyne', first: 'Jolyne', last: 'Cujoh', part: 6, partName: 'Stone Ocean', stand: 'Stone Free', cry: 'ORA ORA ORA!', color: '#13D0B4', img: 'jolynecujoh.png', pos: '40% 35%' },
+  { key: 'johnny', first: 'Johnny', last: 'Joestar', part: 7, partName: 'Steel Ball Run', stand: 'Tusk', cry: 'THE GOLDEN SPIN!', color: '#4D7CFF', img: 'johnnyjoestar.png', pos: '50% 6%' },
+  { key: 'josuke8', first: 'Josuke', last: 'Higashikata', part: 8, partName: 'JoJolion', stand: 'Soft & Wet', cry: 'SOFT & WET!', color: '#D94FC2', img: 'josukehigashikata8.png', pos: '50% 4%' },
+];
+const IMG = f => '../public/images/' + f;
+
+// ---------- build: particles ----------
+const PARTS = [...Array(46)].map((_, i) => {
+  const e = el('div', 'abs', `width:${6 + (i * 7) % 12}px;height:${6 + (i * 7) % 12}px;border-radius:50%;background:${i % 5 === 0 ? '#FF2D95' : i % 3 === 0 ? '#00F5FF' : '#FFD700'};box-shadow:0 0 18px currentColor;`);
+  $('particles').appendChild(e);
+  return { e, x: (i * 263.7) % 1080, y0: (i * 811.3) % 1920, sp: 60 + (i * 37) % 140, ph: i * 1.7 };
+});
+
+// ---------- build: S1 ----------
+const GO = [
+  { x: 40, y: 140, s: 230, r: -12 }, { x: 760, y: 220, s: 200, r: 10 }, { x: 860, y: 470, s: 150, r: 14 },
+  { x: 60, y: 1460, s: 210, r: -8 }, { x: 790, y: 1440, s: 240, r: 12 }, { x: 470, y: 1640, s: 160, r: -4 },
+].map(g => { const e = el('div', 'abs menacing', `left:${g.x}px;top:${g.y}px;font-size:${g.s}px;line-height:1;`, 'ゴ'); $('s1go').appendChild(e); return { ...g, e }; });
+const s1Words = ['EVERY', '<span class="foil">BIZARRE</span>', 'ADVENTURE...'].map((w, i) => {
+  const e = el('div', 'word', 'display:block;', w); $('s1a').appendChild(e); return e;
+});
+const s1Words2 = ['begins with', '<span style="color:var(--gold)">one question.</span>'].map(w => {
+  const e = el('div', 'word', 'display:block;', w); $('s1b').appendChild(e); return e;
+});
+
+// ---------- build: S2 ----------
+const RINGS = [0, 1, 2].map(i => { const e = el('div', 'abs', 'left:540px;top:640px;width:700px;height:700px;margin:-350px 0 0 -350px;border-radius:50%;border:6px solid rgba(255,215,0,0.7);box-shadow:0 0 50px rgba(255,215,0,0.5), inset 0 0 50px rgba(255,0,140,0.35);'); $('s2rings').appendChild(e); return e; });
+$('s2q1').innerHTML = 'WHICH <span style="color:var(--gold)">JOESTAR</span>';
+$('s2q2').textContent = 'ARE YOU?';
+
+// ---------- build: S3 ----------
+const PANELS = CHARS.map((c, i) => {
+  const root = el('div', 'fill', `visibility:hidden;background:${c.color};`);
+  root.innerHTML = `
+    <div class="fill" style="background:linear-gradient(160deg, rgba(255,255,255,0.18) 0%, rgba(0,0,0,0) 40%, rgba(5,5,5,0.55) 100%);"></div>
+    <div class="fill halftone-dark"></div>
+    <div class="speed ink" data-k="speed"></div>
+    <div class="abs display" data-k="num" style="right:-40px;top:-60px;font-size:900px;color:transparent;-webkit-text-stroke:6px rgba(5,5,5,0.35);">${c.part}</div>
+    <div class="abs" data-k="slab" style="left:-200px;top:1180px;width:1600px;height:760px;background:#050505;transform:rotate(-8deg);transform-origin:0 0;"></div>
+    <div class="abs" data-k="frameWrap" style="left:120px;top:150px;width:900px;height:1150px;">
+      <div class="fill" style="background:#050505;clip-path:polygon(8% 0,100% 0,92% 100%,0 100%);transform:translate(16px,16px);"></div>
+      <div class="fill" style="background:#F4ECD6;clip-path:polygon(8% 0,100% 0,92% 100%,0 100%);"></div>
+      <div class="fill" style="clip-path:polygon(9.2% 1.2%,98.6% 1.2%,91% 98.8%,1.4% 98.8%);overflow:hidden;background:#111;">
+        <img class="panel-img" data-k="img" src="${IMG(c.img)}" style="object-position:${c.pos};" />
+      </div>
+    </div>
+    <div class="abs stat" data-k="partTag" style="left:70px;top:70px;font-size:34px;color:#050505;background:var(--gold);padding:6px 22px;box-shadow:6px 6px 0 #050505;">PART ${c.part} · ${c.partName}</div>
+    <div class="abs stat" data-k="count" style="right:70px;top:76px;font-size:34px;color:#F4ECD6;">0${i + 1} / 08</div>
+    <div class="abs display ink-stroke" data-k="name" style="left:70px;top:1290px;font-size:${c.last.length > 9 ? 150 : 170}px;color:#F4ECD6;text-shadow:10px 10px 0 #050505;">
+      <div class="word" data-k="n1">${c.first}</div><br/><div class="word" data-k="n2" style="color:${c.color};">${c.last}</div>
+    </div>
+    <div class="abs" data-k="standRow" style="left:76px;top:1680px;display:flex;align-items:baseline;gap:22px;">
+      <span class="stat" style="font-size:30px;color:rgba(244,236,214,0.7);">「STAND」</span>
+      <span class="editorial foil" style="font-size:76px;">${c.stand}</span>
+    </div>
+    <div class="abs bungee" data-k="cry" style="left:40px;right:40px;top:200px;text-align:center;font-size:${c.cry.length > 18 ? 66 : 84}px;color:#FFF;-webkit-text-stroke:5px #050505;paint-order:stroke fill;text-shadow:8px 8px 0 #FF008C;transform-origin:50% 50%;">${c.cry}</div>
+  `;
+  $('s3').appendChild(root);
+  const q = k => root.querySelector(`[data-k="${k}"]`);
+  return { root, c, q: { speed: q('speed'), num: q('num'), slab: q('slab'), frameWrap: q('frameWrap'), img: q('img'), partTag: q('partTag'), count: q('count'), n1: q('n1'), n2: q('n2'), standRow: q('standRow'), cry: q('cry') } };
+});
+
+// ---------- build: S4 ----------
+$('s4star').innerHTML = star('rgba(255,215,0,0.16)', 'rgba(255,215,0,0.6)', 2);
+const S4ROWS = [
+  { big: '20', label: 'QUESTIONS', color: '#FF008C', y: 300 },
+  { big: '8', label: 'LEGENDARY<br/>STANDS', color: '#FFD700', y: 700 },
+  { big: '1', label: 'DESTINY', color: '#00F5FF', y: 1100 },
+].map((r, i) => {
+  const e = el('div', 'abs', `left:0;right:0;top:${r.y}px;height:360px;`);
+  e.innerHTML = `
+    <div data-k="bar" style="position:absolute;left:-60px;right:-60px;top:40px;height:280px;background:${r.color};transform:skewY(-5deg);box-shadow:0 14px 0 #050505;"></div>
+    <div data-k="ht" class="halftone-dark" style="position:absolute;left:-60px;right:-60px;top:40px;height:280px;transform:skewY(-5deg);"></div>
+    <div data-k="big" class="display ink-stroke" style="position:absolute;left:${i ? 120 : 70}px;top:-10px;font-size:380px;color:#F4ECD6;text-shadow:12px 12px 0 #050505;">${r.big}</div>
+    <div data-k="lab" class="display" style="position:absolute;left:${i === 0 ? 540 : 400}px;top:${r.label.includes('<br') ? 70 : 120}px;font-size:${r.label.includes('<br') ? 104 : 130}px;color:#050505;">${r.label}</div>`;
+  $('s4rows').appendChild(e);
+  return { e, bar: e.querySelector('[data-k="bar"]'), ht: e.querySelector('[data-k="ht"]'), big: e.querySelector('[data-k="big"]'), lab: e.querySelector('[data-k="lab"]') };
+});
+const STRIP = [...CHARS, ...CHARS, ...CHARS].map((c, i) => {
+  const e = el('div', 'abs', `left:${i * 260}px;top:0;width:240px;height:320px;border:6px solid #050505;box-shadow:6px 6px 0 ${c.color};overflow:hidden;background:${c.color};`);
+  e.innerHTML = `<img class="panel-img" src="${IMG(c.img)}" style="object-position:${c.pos};"/>`;
+  $('s4strip').appendChild(e); return e;
+});
+
+// ---------- build: S5 ----------
+const GRID = CHARS.map((c, i) => {
+  const col = i % 2, row = Math.floor(i / 2);
+  const e = el('div', 'abs', `left:${col * 540 - 10}px;top:${row * 480 - 10}px;width:560px;height:500px;border:8px solid #050505;overflow:hidden;background:${c.color};`);
+  e.innerHTML = `<img class="panel-img" src="${IMG(c.img)}" style="object-position:${c.pos};"/><div class="fill" style="background:linear-gradient(0deg, ${c.color}88, transparent 50%);mix-blend-mode:multiply"></div>`;
+  $('s5grid').appendChild(e); return e;
+});
+$('s5title').innerHTML = '<span class="word">DISCOVER</span> <span class="word">YOUR</span> <span class="word foil">STAND</span> <span class="word foil">DESTINY</span>';
+const S5W = [...$('s5title').querySelectorAll('.word')];
+$('s5cta').innerHTML = `
+  <div data-k="halo" style="position:absolute;inset:-26px;border-radius:40px;background:rgba(255,215,0,0.45);filter:blur(36px);"></div>
+  <div style="position:absolute;inset:0;border-radius:28px;padding:5px;background:linear-gradient(135deg,#FFD700,#FFEC8B,#FFD700);box-shadow:0 0 36px rgba(255,215,0,0.55),0 0 88px rgba(255,0,140,0.35);">
+    <div style="position:relative;width:100%;height:100%;border-radius:23px;background:rgba(5,5,5,0.85);overflow:hidden;display:flex;align-items:center;justify-content:center;gap:28px;">
+      <div data-k="sweep" style="position:absolute;top:-20px;bottom:-20px;width:200px;background:rgba(255,255,255,0.35);filter:blur(16px);transform:skewX(-16deg);"></div>
+      <div style="width:46px;height:46px;">${star('#FFD700')}</div>
+      <span class="display" style="font-size:76px;color:#FFD700;letter-spacing:0.08em;text-shadow:0 0 22px rgba(255,215,0,0.6);">AWAKEN YOUR STAND</span>
+      <div style="width:46px;height:46px;">${star('#FFD700')}</div>
+    </div>
+  </div>`;
+const CTA = { halo: $('s5cta').querySelector('[data-k="halo"]'), sweep: $('s5cta').querySelector('[data-k="sweep"]') };
+
+// ---------- build: S6 (To Be Continued arrow) ----------
+$('tbc').innerHTML = `
+  <svg viewBox="0 0 760 150" width="760" height="150">
+    <polygon points="0,30 600,30 600,0 760,75 600,150 600,120 0,120" fill="#6E6A3C" stroke="#1d1a0e" stroke-width="8" stroke-linejoin="round"/>
+    <text x="300" y="98" text-anchor="middle" font-family="Saira Condensed" font-weight="700" font-size="62" fill="#F0E6C0" letter-spacing="3">TO BE CONTINUED</text>
+  </svg>`;
+
+// ---------------------------------------------------------------
+function show(id, on) { $(id).style.visibility = on ? 'visible' : 'hidden'; }
+const inS = (t, k) => t >= T[k][0] && t < T[k][1];
+
+window.render = function (t) {
+  // freeze the picture during the To-Be-Continued tag
+  const tf = Math.min(t, T.s6[0]);
+  let camShake = 0, flash = 0;
+
+  // background
+  $('bgSpeed').style.transform = `rotate(${tf * 6}deg)`;
+  $('bgSpeed').style.opacity = 0.5;
+  PARTS.forEach(o => {
+    const y = ((o.y0 - tf * o.sp) % 1920 + 1920) % 1920;
+    o.e.style.transform = `translate(${o.x + Math.sin(tf * 1.3 + o.ph) * 30}px, ${y}px)`;
+    o.e.style.opacity = 0.35 + 0.35 * Math.sin(tf * 3 + o.ph);
+  });
+
+  // ===== S1 =====
+  show('s1', inS(tf, 's1'));
+  if (inS(tf, 's1')) {
+    const u = tf - T.s1[0];
+    GO.forEach((g, i) => {
+      const a = eo(p(u, 0.2 + i * 0.18, 0.7 + i * 0.18));
+      const pulse = 1 + 0.06 * Math.sin(u * 7 + i);
+      g.e.style.opacity = a * 0.95;
+      g.e.style.transform = `translate(${shake(u + i, 6)}px, ${shake(u * 1.3 + i, 6) - 12 * Math.sin(u * 2 + i)}px) rotate(${g.r}deg) scale(${lerp(0.4, 1, a) * pulse})`;
+    });
+    s1Words.forEach((w, i) => {
+      const a = eo(p(u, T.s1w1 + i * 0.5, T.s1w1 + 0.5 + i * 0.5));
+      w.style.opacity = a; w.style.transform = `translateY(${(1 - a) * 90}px) scale(${lerp(1.3, 1, a)})`;
+      w.style.filter = `blur(${(1 - a) * 12}px)`;
+    });
+    s1Words2.forEach((w, i) => {
+      const a = eo(p(u, T.s1w2 + i * 0.55, T.s1w2 + 0.6 + i * 0.55));
+      w.style.opacity = a; w.style.transform = `translateX(${(1 - a) * (i ? 140 : -140)}px)`;
+    });
+    const out = p(u, T.s1[1] - T.s1[0] - 0.25, T.s1[1] - T.s1[0]);
+    $('s1').style.opacity = 1 - out;
+    $('s1').style.transform = `scale(${1 + out * 0.4 + u * 0.015})`;
+    camShake += u > 3.4 ? 4 : 0;
+  }
+
+  // ===== S2 =====
+  show('s2', inS(tf, 's2'));
+  if (inS(tf, 's2')) {
+    const u = tf - T.s2[0];
+    flash = Math.max(flash, 1 - p(u, 0, 0.3));
+    const lg = eb(p(u, 0, 0.5));
+    $('s2logo').style.transform = `scale(${lerp(2.6, 1, lg)}) rotate(${(1 - lg) * -8}deg)`;
+    $('s2logo').style.opacity = cl(lg * 2);
+    $('s2logo').style.filter = `drop-shadow(0 0 40px rgba(255,215,0,${0.4 + 0.2 * Math.sin(u * 6)})) drop-shadow(12px 12px 0 #050505)`;
+    $('s2speed').style.transform = `rotate(${u * 40}deg) scale(${1 + 0.1 * Math.sin(u * 8)})`;
+    $('s2speed').style.opacity = 0.9;
+    RINGS.forEach((r, i) => {
+      const k = ((u * 0.9 + i / 3) % 1);
+      r.style.transform = `scale(${lerp(0.5, 2.2, k)})`; r.style.opacity = (1 - k) * 0.8;
+    });
+    const q1 = eo(p(u, T.s2q1, T.s2q1 + 0.4));
+    $('s2q1').style.opacity = q1; $('s2q1').style.transform = `translateY(${(1 - q1) * 80}px)`;
+    const sl = T.s2slam - T.s2[0];
+    const q2 = eb(p(u, sl, sl + 0.32));
+    $('s2q2').style.opacity = cl(q2 * 3);
+    $('s2q2').style.transform = `scale(${lerp(3.5, 1, q2)}) rotate(${(1 - q2) * 6 - 3}deg)`;
+    $('s2q2').style.backgroundPosition = `${u * 60}% 0`;
+    $('s2q2').style.filter = `drop-shadow(14px 14px 0 #FF008C)`;
+    if (u > sl && u < sl + 0.45) camShake += 22 * (1 - p(u, sl, sl + 0.45));
+    if (u > sl) flash = Math.max(flash, 0.6 * (1 - p(u, sl + 0.05, sl + 0.25)));
+    camShake += u < 0.4 ? 16 * (1 - u / 0.4) : 0;
+    const out = p(u, T.s2[1] - T.s2[0] - 0.2, T.s2[1] - T.s2[0]);
+    $('s2').style.opacity = 1 - out;
+    $('s2').style.transform = `scale(${1 + u * 0.02 + out * 0.6})`;
+  }
+
+  // ===== S3 =====
+  show('s3', inS(tf, 's3'));
+  if (!inS(tf, 's3')) PANELS.forEach(P => { P.root.style.visibility = 'hidden'; });
+  if (inS(tf, 's3')) {
+    const per = (T.s3[1] - T.s3[0]) / CHARS.length;
+    const idx = Math.min(CHARS.length - 1, Math.floor((tf - T.s3[0]) / per));
+    PANELS.forEach((P, i) => {
+      P.root.style.visibility = i === idx ? 'visible' : 'hidden';
+      if (i !== idx) return;
+      const u = tf - T.s3[0] - i * per;
+      const q = P.q;
+      flash = Math.max(flash, 0.75 * (1 - p(u, 0, 0.12)));
+      camShake += u < 0.25 ? 10 * (1 - u / 0.25) : 0;
+      const dir = i % 2 ? -1 : 1;
+      q.speed.style.transform = `rotate(${u * 30 * dir}deg)`; q.speed.style.opacity = 0.9;
+      q.num.style.transform = `translateX(${(1 - eo(p(u, 0, 0.5))) * 300 * dir}px) scale(${1 + u * 0.05})`;
+      const slab = eo(p(u, 0.02, 0.3));
+      q.slab.style.transform = `rotate(-8deg) translateX(${(1 - slab) * -1600}px)`;
+      const fr = eb(p(u, 0, 0.36));
+      q.frameWrap.style.transform = `translateX(${(1 - fr) * 1100 * dir}px) rotate(${(1 - fr) * 10 * dir}deg)`;
+      q.img.style.transform = `scale(${lerp(1.2, 1.04, eio(p(u, 0, per)))}) translateY(${lerp(10, -20, p(u, 0, per))}px)`;
+      const tag = eo(p(u, 0.15, 0.4));
+      q.partTag.style.opacity = tag; q.partTag.style.transform = `translateY(${(1 - tag) * -60}px)`;
+      q.count.style.opacity = tag;
+      const n1 = eo(p(u, 0.12, 0.38)), n2 = eo(p(u, 0.2, 0.46));
+      q.n1.style.transform = `translateX(${(1 - n1) * -900}px)`;
+      q.n2.style.transform = `translateX(${(1 - n2) * -900}px)`;
+      const sr = eo(p(u, 0.36, 0.6));
+      q.standRow.style.opacity = sr; q.standRow.style.transform = `translateY(${(1 - sr) * 40}px)`;
+      q.standRow.querySelector('.foil').style.backgroundPosition = `${u * 120}% 0`;
+      const cr = eb(p(u, 0.42, 0.66));
+      q.cry.style.opacity = cl(cr * 3);
+      q.cry.style.transform = `rotate(-6deg) scale(${lerp(2.4, 1, cr) + 0.03 * Math.sin(u * 30)}) translate(${shake(u, 3)}px, ${shake(u + 2, 3)}px)`;
+      const out = p(u, per - 0.1, per);
+      P.root.style.transform = `scale(${1 + out * 0.25})`;
+    });
+  }
+
+  // ===== S4 =====
+  show('s4', inS(tf, 's4'));
+  if (inS(tf, 's4')) {
+    const u = tf - T.s4[0];
+    $('s4speed').style.transform = `rotate(${-u * 14}deg)`; $('s4speed').style.opacity = 0.7;
+    $('s4star').style.transform = `rotate(${u * 25}deg) scale(${1.4 + 0.08 * Math.sin(u * 3)})`;
+    $('s4star').style.opacity = 0.7;
+    S4ROWS.forEach((r, i) => {
+      const h = T.s4hits[i] - T.s4[0];
+      const b = eo(p(u, h - 0.1, h + 0.18));
+      r.bar.style.transform = `skewY(-5deg) translateX(${(1 - b) * (i % 2 ? 1300 : -1300)}px)`;
+      r.ht.style.transform = r.bar.style.transform;
+      const bg = eb(p(u, h, h + 0.3));
+      r.big.style.opacity = cl(bg * 3);
+      r.big.style.transform = `scale(${lerp(2.8, 1, bg)}) rotate(${(1 - bg) * -10}deg)`;
+      const lb = eo(p(u, h + 0.12, h + 0.4));
+      r.lab.style.opacity = lb; r.lab.style.transform = `translateX(${(1 - lb) * 200}px)`;
+      if (u > h && u < h + 0.3) { camShake += 14 * (1 - p(u, h, h + 0.3)); flash = Math.max(flash, 0.35 * (1 - p(u, h, h + 0.15))); }
+    });
+    const st = eo(p(u, 0.2, 0.8));
+    $('s4strip').style.transform = `translateX(${-u * 180 - 300}px) translateY(${(1 - st) * 400}px) rotate(-3deg)`;
+    const out = p(u, T.s4[1] - T.s4[0] - 0.22, T.s4[1] - T.s4[0]);
+    $('s4').style.opacity = 1 - out;
+    $('s4').style.transform = `scale(${1 + out * 0.4})`;
+  }
+
+  // ===== S5 =====
+  show('s5', tf >= T.s5[0]);
+  if (tf >= T.s5[0]) {
+    const u = tf - T.s5[0];
+    flash = Math.max(flash, 0.7 * (1 - p(u, 0, 0.25)));
+    $('s5grid').style.transform = `scale(${lerp(1.18, 1.04, eo(p(u, 0, 5)))}) rotate(${lerp(-3, 0, eo(p(u, 0, 2)))}deg)`;
+    GRID.forEach((g, i) => {
+      const a = eb(p(u, i * 0.07, i * 0.07 + 0.4));
+      g.style.opacity = cl(a * 2);
+      g.style.transform = `scale(${lerp(0.4, 1, a)}) rotate(${(1 - a) * (i % 2 ? 12 : -12)}deg)`;
+    });
+    $('s5speed').style.transform = `rotate(${u * 10}deg)`; $('s5speed').style.opacity = 0.45;
+    const lg = eb(p(u, 0.3, 0.8));
+    $('s5logo').style.opacity = cl(lg * 2);
+    $('s5logo').style.transform = `scale(${lerp(0.3, 1, lg)}) translateY(${Math.sin(u * 2.2) * 8}px)`;
+    $('s5logo').style.filter = 'drop-shadow(0 0 34px rgba(255,215,0,0.45)) drop-shadow(10px 10px 0 #050505)';
+    const kk = eo(p(u, 0.7, 1.1)); $('s5kick').style.opacity = kk; $('s5kick').style.letterSpacing = `${lerp(0.6, 0.22, kk)}em`;
+    S5W.forEach((w, i) => {
+      const a = eb(p(u, 0.8 + i * 0.14, 1.15 + i * 0.14));
+      w.style.opacity = cl(a * 2); w.style.transform = `translateY(${(1 - a) * 80}px) scale(${lerp(1.6, 1, a)})`;
+      if (w.classList.contains('foil')) w.style.backgroundPosition = `${u * 40}% 0`;
+    });
+    const c = eb(p(u, 1.6, 2.0));
+    const bob = Math.sin(u * 3.2) * 6;
+    $('s5cta').style.opacity = cl(c * 2);
+    $('s5cta').style.transform = `translateY(${(1 - c) * 120 + bob}px) scale(${lerp(0.6, 1, c) * (1 + 0.025 * Math.sin(u * 6.4))})`;
+    CTA.halo.style.opacity = 0.6 + 0.4 * Math.sin(u * 6.4);
+    CTA.sweep.style.left = `${-260 + ((u - 1.8) % 1.6) / 1.6 * 1400}px`;
+    const ur = eo(p(u, 2.1, 2.5));
+    $('s5url').style.opacity = ur; $('s5url').style.transform = `translateY(${(1 - ur) * 30}px)`;
+    $('s5meta').style.opacity = eo(p(u, 2.4, 2.8));
+  }
+
+  // ===== S6: To Be Continued =====
+  const u6 = t - T.s6[0];
+  if (u6 >= 0) {
+    const sp = eo(p(u6, 0, 0.35));
+    $('world').style.filter = `sepia(${sp}) saturate(${lerp(1, 0.75, sp)}) contrast(${lerp(1, 1.08, sp)}) brightness(${lerp(1, 0.86, sp)})`;
+    const a = eo(p(u6, 0.1, 0.55));
+    $('tbc').style.visibility = 'visible';
+    $('tbc').style.transform = `translateX(${(1 - a) * -900 + Math.sin(u6 * 7) * 8 * a}px)`;
+  } else {
+    $('world').style.filter = 'none';
+    $('tbc').style.visibility = 'hidden';
+  }
+
+  // camera + flash
+  $('world').style.transform = `translate(${shake(t, camShake)}px, ${shake(t + 7.3, camShake)}px)`;
+  $('flash').style.opacity = flash;
+  // start & end fades
+  $('stage').style.opacity = Math.min(p(t, 0, 0.3), 1 - p(t, T.DUR - 0.2, T.DUR));
+};
+
+window.__ready = Promise.all([
+  document.fonts.ready,
+  ...[...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })),
+]).then(() => document.fonts.load('900 100px "Noto Sans JP"', 'ゴ')).then(() => { window.render(0); return true; });
+</script>
+</body>
+</html>
