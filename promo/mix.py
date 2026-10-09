@@ -3,7 +3,7 @@
     python3 mix.py <audio_dir> [music_offset_seconds] [music_volume]
 
 <audio_dir> must contain: music.mp3, vo1.mp3, vo2.mp3, vo3.mp3, impact.mp3,
-whoosh.mp3, swap.mp3, sparkle.mp3, rumble.mp3, and name1.mp3 … name8.mp3
+whoosh.mp3, sparkle.mp3, rumble.mp3, and name1.mp3 … name8.mp3
 (the narrator calling each character as they appear). Writes <audio_dir>/mix.wav.
 music_offset shifts the music so its drop lands on the "ARE YOU?" slam.
 Event times match timeline.json.
@@ -30,14 +30,12 @@ def add(name):
 
 mus = add('music.mp3')
 vo = [(add('vo1.mp3'), 0.67), (add('vo2.mp3'), T['s4hits'][0]), (add('vo3.mp3'), T['s5'][0] + 0.37)]
-imp, wh, swap, sp, rum = (add(n) for n in ('impact.mp3', 'whoosh.mp3', 'swap.mp3', 'sparkle.mp3', 'rumble.mp3'))
+imp, wh, sp, rum = (add(n) for n in ('impact.mp3', 'whoosh.mp3', 'sparkle.mp3', 'rumble.mp3'))
 
 s3a, s3b = T['s3']
 per = (s3b - s3a) / 8
-SWAP_PEAK = 0.45  # the punch in swap.mp3 lands ~0.45s in; align it to each cut
 
 ev = [(rum, 0.15, 0.9), (rum, 2.1, 0.9), (wh, 4.85, 0.6), (imp, T['s2'][0], 0.9), (imp, T['s2slam'] + 0.06, 1.0), (sp, 5.1, 0.35)]
-ev += [(swap, s3a + per * i - SWAP_PEAK, 0.8) for i in range(8)]
 ev += [(imp, t, 0.75) for t in T['s4hits']]
 ev += [(wh, T['s5'][0] - 0.09, 0.6), (imp, T['s5'][0], 0.7), (sp, T['s5'][0] + 1.56, 0.8), (sp, T['s5'][0] + 2.4, 0.4),
        (imp, T['s6'][0], 0.6), (wh, T['s6'][0] + 0.06, 0.5)]
