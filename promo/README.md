@@ -8,7 +8,7 @@ It is styled after the site: purple/gold/magenta palette, Anton and Bodoni Moda 
 | --- | --- |
 | 0–5s | ゴゴゴ intro: "Every bizarre adventure… begins with one question." |
 | 5–8.2s | Logo slam: "Which Joestar are you?" (lands on the music drop) |
-| 8.2–19.2s | Character montage: 8 Joestars, one cut every 3 beats with a Stand-punch hit |
+| 8.2–19.2s | Character montage: 8 Joestars, one cut every 3 beats with a Stand-punch hit; the narrator calls out each name |
 | 19.2–24.8s | "20 questions · 8 legendary Stands · 1 destiny" |
 | 24.8–28.9s | Call to action: jojomi2o.netlify.app |
 | 28.9–31s | Sepia freeze + "To Be Continued" |
