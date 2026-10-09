@@ -52,11 +52,11 @@ for k, (i, t) in enumerate(vo):
     ms = int(t * 1000)
     f.append(f'[{i}:a]{fmt},volume=1.6,adelay={ms}|{ms}[v{k}]')
     vl.append(f'[v{k}]')
-NAME_LEAD = 0.08  # start each name just after its cut
+NAME_LEAD = 0.03  # start each name just after its cut
 for k in range(8):
     i = add(f'name{k + 1}.mp3')
     ms = int((s3a + per * k + NAME_LEAD) * 1000)
-    f.append(f'[{i}:a]{fmt},volume=1.7,adelay={ms}|{ms}[n{k}]')
+    f.append(f'[{i}:a]{fmt},volume=1.6,adelay={ms}|{ms}[n{k}]')
     vl.append(f'[n{k}]')
 f.append(''.join(vl) + f'amix=inputs={len(vl)}:normalize=0,apad=whole_dur={dur},asplit=2[vo][vosc]')
 if music_offset >= 0:
