@@ -7,13 +7,13 @@ It is styled after the site: purple/gold/magenta palette, Anton and Bodoni Moda 
 | Time | Scene |
 | --- | --- |
 | 0–5s | ゴゴゴ intro: "Every bizarre adventure… begins with one question." |
-| 5–8.2s | Logo slam: "Which Joestar are you?" (lands on the music drop) |
-| 8.2–19.2s | Character montage: 8 Joestars, one cut every 3 beats with a Stand-punch hit; the narrator calls out each name |
-| 19.2–24.8s | "20 questions · 8 legendary Stands · 1 destiny" |
-| 24.8–28.9s | Call to action: jojomi2o.netlify.app |
-| 28.9–31s | Sepia freeze + "To Be Continued" |
+| 5–8.1s | Logo slam: "Which Joestar are you?" (lands on the music drop) |
+| 8.1–18.8s | Character montage: 8 Joestars, one cut every 3 beats with a Stand-punch hit; the narrator calls out each name |
+| 18.8–24.6s | "20 questions · 8 legendary Stands · 1 destiny" |
+| 24.6–28.6s | Call to action: jojomi2o.netlify.app |
+| 28.6–31s | Sepia freeze + "To Be Continued" |
 
-Audio was generated with ElevenLabs: an original JoJo-style track (saxophone lead, slap bass, brass, 130 BPM), plus voiceover and sound effects. Official JoJo soundtrack music is copyrighted and gets ads muted or blocked, so it isn't used.
+Music: the user-supplied `JoJos_meme_music.mp3` (135 BPM, drop at 9.08s; not stored in the repo). Voiceover, name callouts and sound effects were generated with ElevenLabs. Check you have the rights to the music before running it as a paid ad; platforms may mute or block copyrighted tracks.
 
 ## Re-render
 
@@ -21,5 +21,5 @@ Audio was generated with ElevenLabs: an original JoJo-style track (saxophone lea
 - `timeline.json`: scene timings, synced to the voiceover and the music drop.
 - `node render.mjs stills <dir> 2 6.8 12`: preview stills.
 - `node render.mjs frames <dir> 30 <worker> <workers>`: every frame as JPEG. Run 4 workers in parallel.
-- `python3 mix.py <audio_dir> -0.145`: builds `mix.wav` from the music, voiceover and SFX files. The offset lines the music drop up with the "ARE YOU?" slam.
+- `python3 mix.py <audio_dir> -2.30 0.26`: builds `mix.wav` from the music, voiceover and SFX files. The offset trims the music so its drop lines up with the "ARE YOU?" slam; 0.26 is the music volume.
 - Encode: `ffmpeg -framerate 30 -i <dir>/f%05d.jpg -i mix.wav -c:v libx264 -crf 19 -pix_fmt yuv420p -c:a aac out.mp4`

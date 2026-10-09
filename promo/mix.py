@@ -1,6 +1,6 @@
 """Mix the ad soundtrack: music (ducked under the voiceover) + voiceover + SFX.
 
-    python3 mix.py <audio_dir> [music_offset_seconds]
+    python3 mix.py <audio_dir> [music_offset_seconds] [music_volume]
 
 <audio_dir> must contain: music.mp3, vo1.mp3, vo2.mp3, vo3.mp3, impact.mp3,
 whoosh.mp3, swap.mp3, sparkle.mp3, rumble.mp3, and name1.mp3 … name8.mp3
@@ -17,6 +17,8 @@ here = Path(__file__).parent
 T = json.loads((here / 'timeline.json').read_text())
 d = Path(sys.argv[1])
 music_offset = float(sys.argv[2]) if len(sys.argv) > 2 else 0.0
+music_volume = float(sys.argv[3]) if len(sys.argv) > 3 else 0.6
+dur = T['DUR']
 
 ins = []
 
@@ -56,14 +58,13 @@ for k in range(8):
     ms = int((s3a + per * k + NAME_LEAD) * 1000)
     f.append(f'[{i}:a]{fmt},volume=1.7,adelay={ms}|{ms}[n{k}]')
     vl.append(f'[n{k}]')
-f.append(''.join(vl) + f'amix=inputs={len(vl)}:normalize=0,asplit=2[vo][vosc]')
+f.append(''.join(vl) + f'amix=inputs={len(vl)}:normalize=0,apad=whole_dur={dur},asplit=2[vo][vosc]')
 if music_offset >= 0:
     ms = int(music_offset * 1000)
     shift = f'adelay={ms}|{ms}'
 else:
     shift = f'atrim=start={-music_offset},asetpts=PTS-STARTPTS'
-dur = T['DUR']
-f.append(f'[{mus}:a]{fmt},{shift},volume=0.6,afade=t=out:st={dur - 1.2}:d=1.2[m]')
+f.append(f'[{mus}:a]{fmt},{shift},volume={music_volume},afade=t=out:st={dur - 1.2}:d=1.2[m]')
 f.append('[m][vosc]sidechaincompress=threshold=0.04:ratio=6:attack=20:release=350[md]')
 f.append('[md][vo]' + ''.join(labels) + f'amix=inputs={2 + len(labels)}:normalize=0,alimiter=limit=0.89,'
          f'atrim=0:{dur},apad=whole_dur={dur}[out]')
